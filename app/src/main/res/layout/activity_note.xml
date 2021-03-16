@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -12,8 +11,8 @@
         android:fillViewport="true">
 
         <fragment
-            android:id="@+id/listNotes"
-            android:name="com.example.notes.ListNotesFragment"
+            android:id="@+id/notes"
+            android:name="com.example.notes.NoteFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
