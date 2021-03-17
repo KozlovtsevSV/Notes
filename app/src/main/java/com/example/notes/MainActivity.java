@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    //public static ArrayList<Note> noteList = new ArrayList<>();
     public static DataBase dBase;
 
     @Override
@@ -21,16 +20,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
     }
-
-//    private void initNotes(){
-//
-//        String[] notes = getResources().getStringArray(R.array.notes);
-//        String[] notesDescription = getResources().getStringArray(R.array.notesDescription);
-//        // Добавляем предопределенные заметки для первого задания в дальнейшем все заметки будем брать из БД
-//        for(int i=0; i < notes.length; i++){
-//            noteList.add(new Note(notes[i], notesDescription[i]));
-//        }
-//    }
 
 }
 

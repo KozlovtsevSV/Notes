@@ -66,8 +66,6 @@ public class Note implements Parcelable {
     }
 
     public long getDateNoteLong(){
-//        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-//        return formatter.format(new Date(this.dateCreationNote));
         return this.dateCreationNote;
 
     }

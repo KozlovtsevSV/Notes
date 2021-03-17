@@ -22,7 +22,6 @@ public class NoteFragment extends Fragment {
     private Note mNote;
     private Button mButtonSelectDate;
     private TextView mTextView;
-    //private int mYear, mMonth, mDay;
 
     public NoteFragment() {
         // Required empty public constructor
@@ -55,23 +54,38 @@ public class NoteFragment extends Fragment {
             mButtonSelectDate.setVisibility(View.VISIBLE);
         }
 
-        View.OnClickListener selectDateButtonClickListener = new View.OnClickListener() {
+        View.OnLongClickListener textViewLongClickListener = new View.OnLongClickListener() {
             @Override
-            public void onClick(View view) {
-
-                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe"));
-                cal.setTimeInMillis(mNote.getDateNoteLong());
-                callDatePicker(view, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+            public boolean onLongClick(View view) {
+                if (mNote != null) {
+                    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe"));
+                    cal.setTimeInMillis(mNote.getDateNoteLong());
+                    callDatePicker(view, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+                    return true;
+                }
+                return false;
             }
         };
 
+        View.OnClickListener selectDateButtonClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mNote != null) {
+                    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe"));
+                    cal.setTimeInMillis(mNote.getDateNoteLong());
+                    callDatePicker(view, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+                }
+            }
+        };
+
+        mTextView.setOnLongClickListener(textViewLongClickListener);
         mButtonSelectDate.setOnClickListener(selectDateButtonClickListener);
-        paintNote();
+        formNote();
 
         return view;
     }
 
-    private void paintNote(){
+    private void formNote(){
         if(mNote!= null){
             mTextView.setText(mNote.getDateNote() + " | "+ mNote.getNameNote() + "\n" + mNote.getDescriptionNote());
         }
@@ -84,13 +98,11 @@ public class NoteFragment extends Fragment {
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        String editTextDateParam = dayOfMonth + "." + (monthOfYear + 1) + "." + year;
-                        //editTextDate.setText(editTextDateParam);
                         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe"));
                         cal.set(year, monthOfYear, dayOfMonth);
                         mNote.setDateNewNote(cal.getTimeInMillis());
                         MainActivity.dBase.setDateNote(mNote);
-                        paintNote();
+                        formNote();
                     }
                 }, year, month, day);
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis() -1000);
