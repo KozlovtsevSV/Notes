@@ -20,7 +20,7 @@ public class NoteFragment extends Fragment {
 
     public static final String ARG_NOTE = "Note";
     private Note mNote;
-    private Button mButtonSelectDate;
+    private Button mButtonSelectDate, mButtonBack;
     private TextView mTextView;
     //private int mYear, mMonth, mDay;
 
@@ -51,6 +51,7 @@ public class NoteFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_note, container, false);
         mTextView = view.findViewById(R.id.text_note);
         mButtonSelectDate = view.findViewById(R.id.buttonSelectDate);
+        mButtonBack = view.findViewById(R.id.buttonBack);
         if (mNote != null){
             mButtonSelectDate.setVisibility(View.VISIBLE);
         }
@@ -58,11 +59,13 @@ public class NoteFragment extends Fragment {
         View.OnLongClickListener textViewLongClickListener = new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                if (mNote != null) {
-                    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe"));
-                    cal.setTimeInMillis(mNote.getDateNoteLong());
-                    callDatePicker(view, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-                    return true;
+                if (view == mButtonSelectDate){
+                    if (mNote != null) {
+                        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe"));
+                        cal.setTimeInMillis(mNote.getDateNoteLong());
+                        callDatePicker(view, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+                        return true;
+                    }
                 }
                 return false;
             }
@@ -78,6 +81,9 @@ public class NoteFragment extends Fragment {
                 }
             }
         };
+
+        //view.OnClickListener blackButtonLisner = (view)->{};
+        //mButtonBack
 
         mTextView.setOnLongClickListener(textViewLongClickListener);
         mButtonSelectDate.setOnClickListener(selectDateButtonClickListener);

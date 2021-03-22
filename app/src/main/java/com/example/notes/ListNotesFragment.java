@@ -1,6 +1,5 @@
 package com.example.notes;
 
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -106,10 +105,22 @@ public class ListNotesFragment extends Fragment {
     }
 
     private void showPortNote(Note note) {
-        Intent intent = new Intent();
-        intent.setClass(getActivity(), NoteActivity.class);
-        intent.putExtra(NoteFragment.ARG_NOTE, note);
-        startActivity(intent);
+//        Intent intent = new Intent();
+//        intent.setClass(getActivity(), NoteActivity.class);
+//        intent.putExtra(NoteFragment.ARG_NOTE, note);
+//        startActivity(intent);
+
+        NoteFragment detail = NoteFragment.newInstance(note);
+
+        // Выполняем транзакцию по замене фрагмента
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.fragment_container, detail);  // замена фрагмента
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        fragmentTransaction.commit();
+
+        fragmentManager.popBackStack();
+
     }
 
     private void showLandNote(Note note) {
