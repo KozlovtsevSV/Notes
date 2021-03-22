@@ -1,13 +1,17 @@
 package com.example.notes;
 
 import android.os.Bundle;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
 
     //public static ArrayList<Note> noteList = new ArrayList<>();
     public static DataBase dBase;
+    Button mButtonBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,19 +22,18 @@ public class MainActivity extends AppCompatActivity {
             String[] notesDescription = getResources().getStringArray(R.array.notesDescription);
             dBase = new DataBase(notes, notesDescription);
         }
-        setContentView(R.layout.activity_main);
+
+       setContentView(R.layout.activity_main);
+
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.fragment_container, new ListNotesFragment());
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+        mButtonBack = findViewById(R.id.buttonBack);
 
     }
-
-//    private void initNotes(){
-//
-//        String[] notes = getResources().getStringArray(R.array.notes);
-//        String[] notesDescription = getResources().getStringArray(R.array.notesDescription);
-//        // Добавляем предопределенные заметки для первого задания в дальнейшем все заметки будем брать из БД
-//        for(int i=0; i < notes.length; i++){
-//            noteList.add(new Note(notes[i], notesDescription[i]));
-//        }
-//    }
 
 }
 

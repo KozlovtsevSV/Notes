@@ -6,17 +6,19 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
 
-        <fragment
-            android:id="@+id/listNotes"
-            android:name="com.example.notes.ListNotesFragment"
+        <include
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            layout="@layout/fragment_content_layout" />
 
     </ScrollView>
+
+
 
 </LinearLayout>

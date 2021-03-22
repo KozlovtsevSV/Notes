@@ -14,9 +14,6 @@ public class DataBase extends AppCompatActivity {
     }
 
     private void initDataBase(String[] notes, String[] notesDescription){
-
-//        String[] notes = getResources().getStringArray(R.array.notes);
-//        String[] notesDescription = getResources().getStringArray(R.array.notesDescription);
         // Добавляем предопределенные заметки для первого задания в дальнейшем все заметки будем брать из БД
         for(int i=0; i < notes.length; i++){
             this.noteList.add(new Note(notes[i], notesDescription[i]));

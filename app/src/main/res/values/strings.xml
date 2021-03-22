@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Notes</string>
     <string name="textButtonSelectDate">Изменить дату</string>
+    <string name="textButtonBack">Назад</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
