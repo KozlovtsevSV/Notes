@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    tools:context=".NoteFragment">
+    android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/fragment_note"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/colorBackground">
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorBackgroundView" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="4dp"
             android:orientation="vertical">
 
         <TableLayout
@@ -23,7 +29,7 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent">
 
                 <Button
                     android:id="@+id/buttonBack"
@@ -36,14 +42,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/textButtonSelectDate"/>
+            </TableRow>
 
         </TableLayout>
 
-            <TextView
-                android:id="@+id/text_note"
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="@dimen/sizeTextDescriptionNote"/>
+                android:fillViewport="true">
+
+                <TextView
+                    android:id="@+id/text_note"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="@dimen/sizeTextDescriptionNote"/>
+
+           </ScrollView>
 
         </LinearLayout>
 

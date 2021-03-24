@@ -27,7 +27,7 @@ public class ListNotesFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static ListNotesFragment newInstance(String param1, String param2) {
+    public static ListNotesFragment newInstance() {
         ListNotesFragment fragment = new ListNotesFragment();
         return fragment;
     }
@@ -105,21 +105,15 @@ public class ListNotesFragment extends Fragment {
     }
 
     private void showPortNote(Note note) {
-//        Intent intent = new Intent();
-//        intent.setClass(getActivity(), NoteActivity.class);
-//        intent.putExtra(NoteFragment.ARG_NOTE, note);
-//        startActivity(intent);
 
         NoteFragment detail = NoteFragment.newInstance(note);
-
         // Выполняем транзакцию по замене фрагмента
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.fragment_container, detail);  // замена фрагмента
+        fragmentTransaction.replace(R.id.fragment_container, detail);  // замена фрагмента
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragmentTransaction.commit();
-
-        fragmentManager.popBackStack();
 
     }
 
@@ -127,10 +121,10 @@ public class ListNotesFragment extends Fragment {
         // Создаём новый фрагмент с текущей позицией
         NoteFragment detail = NoteFragment.newInstance(note);
 
-        // Выполняем транзакцию по замене фрагмента
+        // Выполняем транзакцию по дпбавлению фрагмента
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_note, detail);  // замена фрагмента
+        fragmentTransaction.add(R.id.fragment_container_note, detail);  // добавим фрагмента
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragmentTransaction.commit();
     }

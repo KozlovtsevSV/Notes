@@ -1,6 +1,7 @@
 package com.example.notes;
 
 import android.app.DatePickerDialog;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -52,6 +54,22 @@ public class NoteFragment extends Fragment {
         mTextView = view.findViewById(R.id.text_note);
         mButtonSelectDate = view.findViewById(R.id.buttonSelectDate);
         mButtonBack = view.findViewById(R.id.buttonBack);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            //View viewFragmentNote = view.findViewById(R.id.fragment_note);
+            //LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            //lp.setMargins(800, 0, 0, 0);
+            //viewFragmentNote.setLayoutParams(lp);
+
+            mButtonBack.setVisibility(View.INVISIBLE);
+        }
+        else{
+//            lp.weight = 1;
+//            viewFragmentContainer.setLayoutParams(lp);
+//            viewFragmentContainerNote.setLayoutParams(lp);
+            mButtonBack.setVisibility(View.VISIBLE);
+        }
+
         if (mNote != null){
             mButtonSelectDate.setVisibility(View.VISIBLE);
         }
@@ -71,25 +89,34 @@ public class NoteFragment extends Fragment {
             }
         };
 
-        View.OnClickListener selectDateButtonClickListener = new View.OnClickListener() {
+        View.OnClickListener buttonClick = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mNote != null) {
+                if (mNote != null && view == mButtonSelectDate) {
                     Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe"));
                     cal.setTimeInMillis(mNote.getDateNoteLong());
                     callDatePicker(view, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
                 }
-            }
+                else if (mButtonBack != null && view == mButtonBack) {
+                    FragmentManager manager = requireActivity().getSupportFragmentManager();
+                    manager.popBackStack();
+                }
+           }
         };
 
-        //view.OnClickListener blackButtonLisner = (view)->{};
-        //mButtonBack
+        mButtonBack.setOnClickListener(buttonClick);
 
         mTextView.setOnLongClickListener(textViewLongClickListener);
-        mButtonSelectDate.setOnClickListener(selectDateButtonClickListener);
+        mButtonSelectDate.setOnClickListener(buttonClick);
+
         formNote();
 
         return view;
+    }
+
+    private void back_(){
+
+
     }
 
     private void callDatePicker(View view, int year, int month, int day) {

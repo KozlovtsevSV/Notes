@@ -1,7 +1,10 @@
 package com.example.notes;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -23,20 +26,34 @@ public class MainActivity extends AppCompatActivity {
             dBase = new DataBase(notes, notesDescription);
         }
 
-       setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
+
+        View viewFragmentContainer = findViewById(R.id.fragment_container);
+        View viewFragmentContainerNote = findViewById(R.id.fragment_container_note);
+        LinearLayout.LayoutParams layoutParamsFragmentContainer = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
+        LinearLayout.LayoutParams layoutParamsFragmentContainerNote = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            layoutParamsFragmentContainer.weight = 1;
+            viewFragmentContainer.setLayoutParams(layoutParamsFragmentContainer);
+            layoutParamsFragmentContainerNote.weight = 2;
+            viewFragmentContainerNote.setLayoutParams(layoutParamsFragmentContainerNote);
+        }else{
+            layoutParamsFragmentContainer.weight = 1;
+            viewFragmentContainer.setLayoutParams(layoutParamsFragmentContainer);
+            layoutParamsFragmentContainerNote.weight = 0;
+            viewFragmentContainerNote.setLayoutParams(layoutParamsFragmentContainerNote);
+        }
 
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(R.id.fragment_container, new ListNotesFragment());
-        transaction.addToBackStack(null);
+        ListNotesFragment listNotesFragment = new ListNotesFragment();
+        transaction.replace(R.id.fragment_container, listNotesFragment);
         transaction.commit();
-
-        mButtonBack = findViewById(R.id.buttonBack);
 
     }
 
 }
-
 //    С этого урока мы начинаем разработку приложения с заметками.
 //        Создайте класс данных со структурой заметок: название заметки, описание заметки, дата создания и т. п.
 //        Создайте фрагмент для вывода этих данных.
