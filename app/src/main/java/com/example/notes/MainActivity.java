@@ -2,11 +2,16 @@ package com.example.notes;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -27,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         View viewFragmentContainer = findViewById(R.id.fragment_container);
         View viewFragmentContainerNote = findViewById(R.id.fragment_container_note);
@@ -51,6 +59,48 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.fragment_container, listNotesFragment);
         transaction.commit();
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Обработка выбора пункта меню приложения (активити)
+        int id = item.getItemId();
+
+        switch(id){
+            case R.id.action_settings:
+                Toast.makeText(getApplicationContext(), "Заглушка Настройки", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_favorite:
+                Toast.makeText(getApplicationContext(), "Заглушка Избранное", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.about_author:
+                Toast.makeText(getApplicationContext(), "Заглушка О програме", Toast.LENGTH_SHORT).show();
+                 return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Здесь определяем меню приложения (активити)
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        MenuItem search = menu.findItem(R.id.action_search); // поиск пункта меню поиска
+        SearchView searchText = (SearchView) search.getActionView(); // строка поиска
+        searchText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            // реагирует на конец ввода поиска
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Toast.makeText(MainActivity.this, query, Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            // реагирует на нажатие каждой клавиши
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return true;
+            }
+        });
+
+        return true;
     }
 
 }

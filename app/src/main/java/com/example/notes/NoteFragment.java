@@ -1,14 +1,21 @@
 package com.example.notes;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
+import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +31,7 @@ public class NoteFragment extends Fragment {
     private Note mNote;
     private Button mButtonSelectDate, mButtonBack;
     private TextView mTextView;
+    private TableLayout mNoteToolBar;
     //private int mYear, mMonth, mDay;
 
     public NoteFragment() {
@@ -54,25 +62,24 @@ public class NoteFragment extends Fragment {
         mTextView = view.findViewById(R.id.text_note);
         mButtonSelectDate = view.findViewById(R.id.buttonSelectDate);
         mButtonBack = view.findViewById(R.id.buttonBack);
+        mNoteToolBar = view.findViewById(R.id.noteToolBar);
+
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            //View viewFragmentNote = view.findViewById(R.id.fragment_note);
-            //LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            //lp.setMargins(800, 0, 0, 0);
-            //viewFragmentNote.setLayoutParams(lp);
-
             mButtonBack.setVisibility(View.INVISIBLE);
+            LinearLayout.LayoutParams layoutParamsNoteToolBar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
+            mNoteToolBar.setLayoutParams(layoutParamsNoteToolBar);
         }
         else{
-//            lp.weight = 1;
-//            viewFragmentContainer.setLayoutParams(lp);
-//            viewFragmentContainerNote.setLayoutParams(lp);
             mButtonBack.setVisibility(View.VISIBLE);
+            LinearLayout.LayoutParams layoutParamsNoteToolBar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            mNoteToolBar.setLayoutParams(layoutParamsNoteToolBar);
+
         }
 
-        if (mNote != null){
-            mButtonSelectDate.setVisibility(View.VISIBLE);
-        }
+//        if (mNote != null){
+//            mButtonSelectDate.setVisibility(View.VISIBLE);
+//        }
 
         View.OnLongClickListener textViewLongClickListener = new View.OnLongClickListener() {
             @Override
@@ -111,6 +118,8 @@ public class NoteFragment extends Fragment {
 
         formNote();
 
+        initPopupMenu(mTextView);
+
         return view;
     }
 
@@ -146,6 +155,45 @@ public class NoteFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+    }
+
+
+    private void initPopupMenu(View view) {
+
+        TextView viewTextNote = view.findViewById(R.id.text_note);
+        viewTextNote.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Activity activity = requireActivity();
+                PopupMenu popupMenu = new PopupMenu(activity, v);
+                activity.getMenuInflater().inflate(R.menu.popup, popupMenu.getMenu());
+                Menu menu = popupMenu.getMenu();
+                //menu.findItem(R.id.popup_edit_note).setVisible(false);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        int id = item.getItemId();
+                        switch (id) {
+                            case R.id.popup_edit_note:
+                                Toast.makeText(getContext(), "Заглушка Редактирование", Toast.LENGTH_SHORT).show();
+                                return true;
+                            case R.id.popup_copy_note:
+                                Toast.makeText(getContext(), "Заглушка Копирование", Toast.LENGTH_SHORT).show();
+                                return true;
+                            case R.id.popup_send_note:
+                                Toast.makeText(getContext(), "Заглушка Поделиться", Toast.LENGTH_SHORT).show();
+                                return true;
+//                            case 123456:
+//                                Toast.makeText(getContext(), "Chosen new item added", Toast.LENGTH_SHORT).show();
+//                                return true;
+                        }
+                        return true;
+                    }
+                });
+                popupMenu.show();
+                return true;
+            }
+        });
     }
 
 }
