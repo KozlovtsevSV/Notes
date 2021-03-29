@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/fragment_edit_note"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBackground">
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorBackgroundView" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="4dp"
+            android:orientation="vertical">
+
+            <TableLayout
+                android:id="@+id/noteToolBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="right">
+                    <Button
+                        android:id="@+id/buttonSaveNote"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/textButtonSaveNote"/>
+
+                    <Button
+                        android:id="@+id/buttonBack"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/textButtonCancelNote"/>
+
+                </TableRow>
+
+            </TableLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/title_note_name"
+                android:textSize="@dimen/sizeTextDescriptionNote"
+                android:textColor="@color/colorTextListNotes"
+                android:text="Наименование"
+                />
+
+            <EditText
+                android:id="@+id/edit_note_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:textSize="@dimen/sizeTextDescriptionNote"
+                android:background="@color/cardview_light_background"
+                android:hint="Название заметки"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/note_date"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/note_date_title"
+                    android:paddingTop="10dp"
+                    android:textSize="@dimen/sizeTextDescriptionNote"
+                    android:textColor="@color/colorTextListNotes"
+                    android:text="дата заметки: "
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/note_date_value"
+                    android:paddingTop="10dp"
+                    android:textSize="@dimen/sizeTextDescriptionNote"
+                    android:textColor="@color/colorTextListNotes"
+                    android:text=""
+                    />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/title_note_text"
+                android:paddingTop="10dp"
+                android:textSize="@dimen/sizeTextDescriptionNote"
+                android:textColor="@color/colorTextListNotes"
+                android:text="Текст заметки"
+                />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
+
+                <EditText
+                    android:id="@+id/edit_note_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="top"
+                    android:textSize="@dimen/sizeTextDescriptionNote"/>
+
+            </ScrollView>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</LinearLayout>

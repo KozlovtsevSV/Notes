@@ -2,22 +2,18 @@ package com.example.notes;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
 
-    //public static ArrayList<Note> noteList = new ArrayList<>();
     public static DataBase dBase;
     Button mButtonBack;
 
@@ -32,10 +28,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_main);
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        addFragment(ListNotesFragment.newInstance());
+
+        initFragments();
+    }
+
+    private void initFragments(){
         View viewFragmentContainer = findViewById(R.id.fragment_container);
         View viewFragmentContainerNote = findViewById(R.id.fragment_container_note);
         LinearLayout.LayoutParams layoutParamsFragmentContainer = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
@@ -58,49 +59,17 @@ public class MainActivity extends AppCompatActivity {
         ListNotesFragment listNotesFragment = new ListNotesFragment();
         transaction.replace(R.id.fragment_container, listNotesFragment);
         transaction.commit();
-
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Обработка выбора пункта меню приложения (активити)
-        int id = item.getItemId();
-
-        switch(id){
-            case R.id.action_settings:
-                Toast.makeText(getApplicationContext(), "Заглушка Настройки", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_favorite:
-                Toast.makeText(getApplicationContext(), "Заглушка Избранное", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.about_author:
-                Toast.makeText(getApplicationContext(), "Заглушка О програме", Toast.LENGTH_SHORT).show();
-                 return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Здесь определяем меню приложения (активити)
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        MenuItem search = menu.findItem(R.id.action_search); // поиск пункта меню поиска
-        SearchView searchText = (SearchView) search.getActionView(); // строка поиска
-        searchText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            // реагирует на конец ввода поиска
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(MainActivity.this, query, Toast.LENGTH_SHORT).show();
-                return true;
-            }
-            // реагирует на нажатие каждой клавиши
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return true;
-            }
-        });
-
-        return true;
+    private void addFragment(Fragment fragment) {
+        //Получить менеджер фрагментов
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        // Открыть транзакцию
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.addToBackStack(null);
+        // Закрыть транзакцию
+        fragmentTransaction.commit();
     }
 
 }
@@ -111,4 +80,20 @@ public class MainActivity extends AppCompatActivity {
 //        Добавьте фрагмент, в котором открывается заметка. По аналогии с примером из урока: если нажать на элемент списка в портретной ориентации — открывается новое окно, если нажать в ландшафтной — окно открывается рядом.
 //        * Разберитесь, как можно сделать, и сделайте корректировку даты создания при помощи DatePicker.
 //        * Задача для дополнительного обучения.
+
+
+/*    Создайте список ваших заметок.
+        Создайте карточку для элемента списка.
+        Класс данных, созданный на шестом уроке, используйте для заполнения карточки списка.
+        * Создайте фрагмент для редактирования данных в конкретной карточке. Этот фрагмент пока можно вызвать через основное меню.
+        * Задача для дополнительного обучения.*/
+
+
+
+//    Сделайте фрагмент добавления и редактирования данных, если вы ещё не сделали его.
+//        Сделайте навигацию между фрагментами, также организуйте обмен данными между фрагментами.
+//        Создайте контекстное меню для изменения и удаления заметок.
+//        *Изучите, каким образом можно вызывать DatePicker в виде диалогового окна. Создайте текстовое поле, при нажатии на которое вызывалось бы диалоговое окно с DatePicker.
+
+
 

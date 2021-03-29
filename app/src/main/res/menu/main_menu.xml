@@ -2,28 +2,34 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_add"
+        android:orderInCategory="10"
+        android:title="@string/main_menu_add"
+        android:icon="@android:drawable/ic_menu_add"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:title="@string/maim_menu_settings"
+        android:title="@string/main_menu_settings"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_favorite"
         android:icon="@android:drawable/btn_star_big_on"
         android:orderInCategory="20"
-        android:title="@string/maim_menu_favorite"
+        android:title="@string/main_menu_favorite"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_search"
         android:icon="@android:drawable/ic_menu_search"
         android:orderInCategory="5"
-        android:title="@string/maim_menu_search"
+        android:title="@string/main_menu_search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always" />
     <item
         android:id="@+id/about_author"
         android:icon="@android:drawable/ic_menu_search"
         android:orderInCategory="1000"
-        android:title="@string/maim_menu_about_author"
+        android:title="@string/main_menu_about_author"
         app:showAsAction="never" />
 
 

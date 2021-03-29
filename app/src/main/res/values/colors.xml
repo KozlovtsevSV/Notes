@@ -6,5 +6,5 @@
     <color name="colorBackground">#f5da42</color>
     <color name="colorTextListNotes">#000000</color>
     <color name="colorBackgroundView">#000000</color>
-
+    <color name="colorItemNoteSeparator">#636200</color>
 </resources>

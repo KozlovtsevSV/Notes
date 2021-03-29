@@ -3,15 +3,25 @@
     <string name="textButtonSelectDate">Изменить дату</string>
     <string name="textButtonBack">Назад</string>
 
-    <string name="popup_edit_note">Редактировать</string>
-    <string name="popup_send_note">Поделиться</string>
-    <string name="popup_copy_note">Скопировать</string>
+    <string name="textButtonSaveNote">Сохранить</string>
+    <string name="textButtonCancelNote">Отмена</string>
 
-    <string name="maim_menu_search">Поиск</string>
-    <string name="maim_menu_favorite">Избранное</string>
-    <string name="maim_menu_settings">Настройки</string>
-    <string name="maim_menu_about_author">О программе</string>
+    <string name="note_edit">Редактировать</string>
+    <string name="note_send">Поделиться</string>
+    <string name="note_copy">Скопировать</string>
 
+    <string name="main_menu_add">Добавить</string>
+    <string name="main_menu_search">Поиск</string>
+    <string name="main_menu_favorite">Избранное</string>
+    <string name="main_menu_settings">Настройки</string>
+    <string name="main_menu_about_author">О программе</string>
+
+    <string name="menu_edit">Редактировать</string>
+    <string name="menu_delete">Удалить</string>
+    <string name="menu_edit_date">Редактировать дату</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

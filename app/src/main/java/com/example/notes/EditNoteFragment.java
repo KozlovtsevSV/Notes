@@ -1,20 +1,15 @@
 package com.example.notes;
 
 import android.app.DatePickerDialog;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,23 +19,27 @@ import androidx.fragment.app.FragmentManager;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-public class NoteFragment extends Fragment {
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link EditNoteFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class EditNoteFragment extends Fragment {
 
     public static final String ARG_NOTE = "Note";
     private Note mNote;
-    private Button mButtonSelectDate, mButtonBack;
-    private TextView mTextView;
-    private TableLayout mNoteToolBar;
-    public static final String CURRENT_NOTE = "CurrentNote";
-    private Note mCurrentNote;
-    //private int mYear, mMonth, mDay;
+    private Button mButtonSelectDate, mButtonBack, mButtonSave;
+    private EditText mEditText, mEditName;
+    private TextView mViewData;
+    private LinearLayout mLinerLayoutDate;
+    private int mYear, mMonth, mDay;
 
-    public NoteFragment() {
+    public EditNoteFragment() {
         // Required empty public constructor
     }
 
-    public static NoteFragment newInstance(Note note) {
-        NoteFragment fragment = new NoteFragment();
+    public static EditNoteFragment newInstance(Note note) {
+        EditNoteFragment fragment = new EditNoteFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_NOTE, note);
         fragment.setArguments(args);
@@ -58,24 +57,16 @@ public class NoteFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_note, container, false);
-        mTextView = view.findViewById(R.id.text_note);
+
+        View view = inflater.inflate(R.layout.fragment_edit_note, container, false);
+        mEditText = view.findViewById(R.id.edit_note_text);
+        mEditName = view.findViewById(R.id.edit_note_name);
+        mViewData = view.findViewById(R.id.note_date_value);
+
         mButtonSelectDate = view.findViewById(R.id.buttonSelectDate);
         mButtonBack = view.findViewById(R.id.buttonBack);
-        mNoteToolBar = view.findViewById(R.id.noteToolBar);
-
-
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mButtonBack.setVisibility(View.INVISIBLE);
-            LinearLayout.LayoutParams layoutParamsNoteToolBar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
-            mNoteToolBar.setLayoutParams(layoutParamsNoteToolBar);
-        }
-        else{
-            mButtonBack.setVisibility(View.VISIBLE);
-            LinearLayout.LayoutParams layoutParamsNoteToolBar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            mNoteToolBar.setLayoutParams(layoutParamsNoteToolBar);
-
-        }
+        mButtonSave = view.findViewById(R.id.buttonSaveNote);
+        mLinerLayoutDate = view.findViewById(R.id.note_date);
 
         View.OnLongClickListener textViewLongClickListener = new View.OnLongClickListener() {
             @Override
@@ -95,7 +86,7 @@ public class NoteFragment extends Fragment {
         View.OnClickListener buttonClick = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mNote != null && view == mButtonSelectDate) {
+                if (mNote != null && view == mLinerLayoutDate) {
                     Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe"));
                     cal.setTimeInMillis(mNote.getDateNoteLong());
                     callDatePicker(view, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
@@ -104,22 +95,25 @@ public class NoteFragment extends Fragment {
                     FragmentManager manager = requireActivity().getSupportFragmentManager();
                     manager.popBackStack();
                 }
-           }
+                else if (mButtonSave != null && view == mButtonSave) {
+                    mNote.setNameNote(mEditName.getText().toString());
+                    mNote.setDescriptionNote(mEditText.getText().toString());
+                    FragmentManager manager = requireActivity().getSupportFragmentManager();
+                    manager.popBackStack();
+                }
+            }
         };
 
         mButtonBack.setOnClickListener(buttonClick);
+        mButtonSave.setOnClickListener(buttonClick);
 
-        mTextView.setOnLongClickListener(textViewLongClickListener);
-        mButtonSelectDate.setOnClickListener(buttonClick);
+        mEditText.setOnLongClickListener(textViewLongClickListener);
+        mLinerLayoutDate.setOnClickListener(buttonClick);
 
         formNote();
-
-        //initPopupMenu(mTextView);
-        registerForContextMenu(mTextView);
-
+        registerForContextMenu(mEditText);
         return view;
     }
-
 
 
     private void callDatePicker(View view, int year, int month, int day) {
@@ -142,39 +136,16 @@ public class NoteFragment extends Fragment {
 
     private void formNote(){
         if(mNote!= null){
-            mTextView.setText(mNote.getDateNote() + " | "+ mNote.getNameNote() + "\n" + mNote.getDescriptionNote());
+            mEditName.setText(mNote.getNameNote());
+            mEditText.setText(mNote.getDescriptionNote());
+            mViewData.setText(mNote.getDateNote());
+            //mEditText.setText(mNote.getDateNote() + " | "+ mNote.getNameNote() + "\n" + mNote.getDescriptionNote());
         }
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-    }
-
-    @Override
-    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = requireActivity().getMenuInflater();
-        inflater.inflate(R.menu.note_menu, menu);
-    }
-
-    @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.action_edit:
-                // Do some stuff
-                Toast.makeText(getContext(), "Заглушка Редактировать", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_copy:
-                // Do some stuff
-                Toast.makeText(getContext(), "Заглушка Копировать", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_send:
-                // Do some stuff
-                Toast.makeText(getContext(), "Заглушка Поделиться", Toast.LENGTH_SHORT).show();
-                return true;
-        }
-        return super.onContextItemSelected(item);
     }
 
 }

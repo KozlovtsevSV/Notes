@@ -24,6 +24,18 @@ public class DataBase extends AppCompatActivity {
         return noteList.get(index);
     }
 
+    public void addNote(){
+
+    }
+
+    public void deleteNote(Note note){
+        noteList.remove(note.getIndexNote());
+    }
+
+    public int getSize(){
+        return noteList.size();
+    }
+
     public ArrayList<Note> getListNote(){
         return noteList;
     }
@@ -31,5 +43,7 @@ public class DataBase extends AppCompatActivity {
     public void setDateNote(Note note){
         noteList.set(note.getIndexNote(), note);
     }
+
+
 
 }
