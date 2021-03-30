@@ -41,6 +41,12 @@ public class ListNotesFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(CURRENT_NOTE, mCurrentNote);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -87,32 +93,24 @@ public class ListNotesFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 mCurrentNote = MainActivity.dBase.getNote(position);
-                if (mIsLandscape) {
-                    showLandNote(mCurrentNote);
-                } else {
-                    showPortNote(mCurrentNote);
-                }
+                showNote(mCurrentNote);
             }
         });
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-
-        outState.putParcelable(CURRENT_NOTE, mCurrentNote);
-        super.onSaveInstanceState(outState);
-
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        if(savedInstanceState != null){
+            mCurrentNote = savedInstanceState.getParcelable(CURRENT_NOTE);
+        }
+
         mIsLandscape = getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_LANDSCAPE;
 
         if (mIsLandscape) {
-            showLandNote(mCurrentNote);
+            showNote(mCurrentNote);
         }
     }
 
@@ -121,45 +119,40 @@ public class ListNotesFragment extends Fragment {
         inflater.inflate(R.menu.main_menu, menu);
     }
 
-    private void showPortNote(Note note) {
+    private void editNote(Note note){
+        // Создаём новый фрагмент с текущей позицией
+        NoteEditFragment detail = NoteEditFragment.newInstance(note);
+        // Выполняем транзакцию по замене фрагмента
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        if(mIsLandscape){// замена фрагмента
+            fragmentTransaction.add(R.id.fragment_container_note, detail);
+        }
+        else{
+            fragmentTransaction.replace(R.id.fragment_container, detail);
+        }
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        fragmentTransaction.commit();
+    }
+
+
+    private void showNote(Note note) {
 
         NoteFragment detail = NoteFragment.newInstance(note);
         // Выполняем транзакцию по замене фрагмента
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, detail);  // замена фрагмента
+        if(mIsLandscape){// замена фрагмента
+            fragmentTransaction.add(R.id.fragment_container_note, detail);
+        }
+        else{
+            fragmentTransaction.replace(R.id.fragment_container, detail);
+        }
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragmentTransaction.commit();
 
-    }
-
-    private void showLandNote(Note note) {
-        // Создаём новый фрагмент с текущей позицией
-        NoteFragment detail = NoteFragment.newInstance(note);
-
-        // Выполняем транзакцию по дпбавлению фрагмента
-        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.fragment_container_note, detail);  // добавим фрагмента
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        fragmentTransaction.commit();
-    }
-
-    private void editNote(Note note) {
-        // Создаём новый фрагмент с текущей позицией
-        EditNoteFragment detail = EditNoteFragment.newInstance(note);
-        // Выполняем транзакцию по замене фрагмента
-        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-       if (mIsLandscape) {
-           fragmentTransaction.add(R.id.fragment_container_note, detail);
-       }else{
-           fragmentTransaction.replace(R.id.fragment_container, detail);  // замена фрагмента
-       }
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        fragmentTransaction.commit();
     }
 
     @Override
@@ -178,7 +171,7 @@ public class ListNotesFragment extends Fragment {
                     editNote(mData.getNote(lastSelectedPosition));
                     return true;
                 case R.id.action_delete:
-                     mData.deleteNote(mData.getNote(lastSelectedPosition));
+                    mData.deleteNote(mData.getNote(lastSelectedPosition));
                     mAdapter.notifyItemRemoved(mAdapter.getLastSelectedPosition());
                     return true;
             }
@@ -193,8 +186,12 @@ public class ListNotesFragment extends Fragment {
 
         switch(id){
             case R.id.action_add:
-                Toast.makeText(getContext(), "Заглушка Добавить", Toast.LENGTH_SHORT).show();
-                editNote(null);
+                //Toast.makeText(getContext(), "Заглушка Добавить", Toast.LENGTH_SHORT).show();
+                //Note newNote = new Note();
+                Note newNote = mData.addNote();
+                editNote(newNote);
+                initRecyclerView();
+                mAdapter.notifyItemInserted(newNote.getIndexNote());
                 return true;
             case R.id.action_settings:
                 Toast.makeText(getContext(), "Заглушка Настройки", Toast.LENGTH_SHORT).show();

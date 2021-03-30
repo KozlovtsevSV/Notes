@@ -16,6 +16,7 @@ public class Note implements Parcelable {
 
     Note(){
         this.index = ++lastIndex;
+        this.nameNote = "Новая заметка";
         this.dateCreationNote = getDateNewNote();
 
     }

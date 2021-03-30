@@ -24,8 +24,10 @@ public class DataBase extends AppCompatActivity {
         return noteList.get(index);
     }
 
-    public void addNote(){
-
+    public Note addNote(){
+        Note newNote = new Note();
+        this.noteList.add(newNote);
+        return newNote;
     }
 
     public void deleteNote(Note note){

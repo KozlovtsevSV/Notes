@@ -21,10 +21,10 @@ import java.util.TimeZone;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link EditNoteFragment#newInstance} factory method to
+ * Use the {@link NoteEditFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class EditNoteFragment extends Fragment {
+public class NoteEditFragment extends Fragment {
 
     public static final String ARG_NOTE = "Note";
     private Note mNote;
@@ -34,12 +34,12 @@ public class EditNoteFragment extends Fragment {
     private LinearLayout mLinerLayoutDate;
     private int mYear, mMonth, mDay;
 
-    public EditNoteFragment() {
+    public NoteEditFragment() {
         // Required empty public constructor
     }
 
-    public static EditNoteFragment newInstance(Note note) {
-        EditNoteFragment fragment = new EditNoteFragment();
+    public static NoteEditFragment newInstance(Note note) {
+        NoteEditFragment fragment = new NoteEditFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_NOTE, note);
         fragment.setArguments(args);
@@ -55,10 +55,15 @@ public class EditNoteFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_edit_note, container, false);
+        View view = inflater.inflate(R.layout.fragment_note_edit, container, false);
         mEditText = view.findViewById(R.id.edit_note_text);
         mEditName = view.findViewById(R.id.edit_note_name);
         mViewData = view.findViewById(R.id.note_date_value);

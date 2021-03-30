@@ -3,10 +3,7 @@ package com.example.notes;
 import android.app.DatePickerDialog;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -14,7 +11,6 @@ import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,9 +27,7 @@ public class NoteFragment extends Fragment {
     private Button mButtonSelectDate, mButtonBack;
     private TextView mTextView;
     private TableLayout mNoteToolBar;
-    public static final String CURRENT_NOTE = "CurrentNote";
-    private Note mCurrentNote;
-    //private int mYear, mMonth, mDay;
+
 
     public NoteFragment() {
         // Required empty public constructor
@@ -53,6 +47,11 @@ public class NoteFragment extends Fragment {
         if (getArguments() != null) {
             mNote = getArguments().getParcelable(ARG_NOTE);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -77,21 +76,6 @@ public class NoteFragment extends Fragment {
 
         }
 
-        View.OnLongClickListener textViewLongClickListener = new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if (view == mButtonSelectDate){
-                    if (mNote != null) {
-                        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe"));
-                        cal.setTimeInMillis(mNote.getDateNoteLong());
-                        callDatePicker(view, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-                        return true;
-                    }
-                }
-                return false;
-            }
-        };
-
         View.OnClickListener buttonClick = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,19 +92,12 @@ public class NoteFragment extends Fragment {
         };
 
         mButtonBack.setOnClickListener(buttonClick);
-
-        mTextView.setOnLongClickListener(textViewLongClickListener);
         mButtonSelectDate.setOnClickListener(buttonClick);
 
         formNote();
 
-        //initPopupMenu(mTextView);
-        registerForContextMenu(mTextView);
-
         return view;
     }
-
-
 
     private void callDatePicker(View view, int year, int month, int day) {
 
@@ -149,32 +126,6 @@ public class NoteFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-    }
-
-    @Override
-    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = requireActivity().getMenuInflater();
-        inflater.inflate(R.menu.note_menu, menu);
-    }
-
-    @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.action_edit:
-                // Do some stuff
-                Toast.makeText(getContext(), "Заглушка Редактировать", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_copy:
-                // Do some stuff
-                Toast.makeText(getContext(), "Заглушка Копировать", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_send:
-                // Do some stuff
-                Toast.makeText(getContext(), "Заглушка Поделиться", Toast.LENGTH_SHORT).show();
-                return true;
-        }
-        return super.onContextItemSelected(item);
     }
 
 }

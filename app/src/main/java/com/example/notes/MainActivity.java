@@ -3,7 +3,6 @@ package com.example.notes;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,28 +14,30 @@ import androidx.fragment.app.FragmentTransaction;
 public class MainActivity extends AppCompatActivity {
 
     public static DataBase dBase;
-    Button mButtonBack;
+    public static ListNotesFragment mListNotesFragment = ListNotesFragment.newInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if(savedInstanceState==null){
             // подключаемся к базе
             String[] notes = getResources().getStringArray(R.array.notes);
             String[] notesDescription = getResources().getStringArray(R.array.notesDescription);
             dBase = new DataBase(notes, notesDescription);
+
+            addFragment(mListNotesFragment);
         }
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        addFragment(ListNotesFragment.newInstance());
+        changeOrientation(mListNotesFragment);
 
-        initFragments();
     }
 
-    private void initFragments(){
+    private void changeOrientation(Fragment fragment){
         View viewFragmentContainer = findViewById(R.id.fragment_container);
         View viewFragmentContainerNote = findViewById(R.id.fragment_container_note);
         LinearLayout.LayoutParams layoutParamsFragmentContainer = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
@@ -53,11 +54,9 @@ public class MainActivity extends AppCompatActivity {
             layoutParamsFragmentContainerNote.weight = 0;
             viewFragmentContainerNote.setLayoutParams(layoutParamsFragmentContainerNote);
         }
-
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        ListNotesFragment listNotesFragment = new ListNotesFragment();
-        transaction.replace(R.id.fragment_container, listNotesFragment);
+        transaction.replace(R.id.fragment_container, fragment);
         transaction.commit();
     }
 
