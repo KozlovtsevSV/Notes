@@ -1,5 +1,6 @@
 package com.example.notes;
 
+import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -9,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -201,6 +203,7 @@ public class ListNotesFragment extends Fragment {
                 int position = newNote.getIndexNote();
                 mAdapter.notifyItemInserted(newNote.getIndexNote());
                 ((RecyclerView) getView()).scrollToPosition(position);
+                hideSoftKeyboard(getActivity());
                 return true;
             case R.id.action_settings:
                 Toast.makeText(getContext(), "Заглушка Настройки", Toast.LENGTH_SHORT).show();
@@ -214,5 +217,15 @@ public class ListNotesFragment extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(
+                activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
 
 }
