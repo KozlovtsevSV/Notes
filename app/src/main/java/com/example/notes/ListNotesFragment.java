@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +26,7 @@ import com.example.notes.ui.NoteAdapter;
 public class ListNotesFragment extends Fragment {
 
     public static final String CURRENT_NOTE = "CurrentNote";
+    public static final String FRAGMENT_NOTE = "FragmentNote";
     private Note mCurrentNote;
     private boolean mIsLandscape;
 
@@ -51,8 +53,7 @@ public class ListNotesFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_list_notes, container, false);
-        mRecyclerView = view.findViewById(R.id.recycler_view_lines);
-        //initRecyclerView();
+
         initView(view);
         setHasOptionsMenu(true);
         return view;
@@ -87,6 +88,11 @@ public class ListNotesFragment extends Fragment {
         DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(),  LinearLayoutManager.VERTICAL);
         itemDecoration.setDrawable(getResources().getDrawable(R.drawable.separator, null));
         mRecyclerView.addItemDecoration(itemDecoration);
+
+        DefaultItemAnimator itemAnimator = new DefaultItemAnimator();
+        itemAnimator.setAddDuration(1000);
+        itemAnimator.setRemoveDuration(1000);
+        mRecyclerView.setItemAnimator(itemAnimator);
 
         // Установим слушателя
         mAdapter.SetOnItemClickListener(new NoteAdapter.OnItemClickListener() {
@@ -137,17 +143,17 @@ public class ListNotesFragment extends Fragment {
     }
 
 
-    private void showNote(Note note) {
+    public void showNote(Note note) {
 
         NoteFragment detail = NoteFragment.newInstance(note);
         // Выполняем транзакцию по замене фрагмента
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         if(mIsLandscape){// замена фрагмента
-            fragmentTransaction.add(R.id.fragment_container_note, detail);
+            fragmentTransaction.add(R.id.fragment_container_note, detail, FRAGMENT_NOTE);
         }
         else{
-            fragmentTransaction.replace(R.id.fragment_container, detail);
+            fragmentTransaction.replace(R.id.fragment_container, detail, FRAGMENT_NOTE);
         }
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -173,6 +179,8 @@ public class ListNotesFragment extends Fragment {
                 case R.id.action_delete:
                     mData.deleteNote(mData.getNote(lastSelectedPosition));
                     mAdapter.notifyItemRemoved(mAdapter.getLastSelectedPosition());
+                    mCurrentNote = null;
+                    showNote(mCurrentNote);
                     return true;
             }
         }
@@ -186,12 +194,11 @@ public class ListNotesFragment extends Fragment {
 
         switch(id){
             case R.id.action_add:
-                //Toast.makeText(getContext(), "Заглушка Добавить", Toast.LENGTH_SHORT).show();
-                //Note newNote = new Note();
                 Note newNote = mData.addNote();
                 editNote(newNote);
-                initRecyclerView();
+                int position = newNote.getIndexNote();
                 mAdapter.notifyItemInserted(newNote.getIndexNote());
+                ((RecyclerView) getView()).scrollToPosition(position);
                 return true;
             case R.id.action_settings:
                 Toast.makeText(getContext(), "Заглушка Настройки", Toast.LENGTH_SHORT).show();

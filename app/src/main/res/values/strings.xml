@@ -18,7 +18,7 @@
 
     <string name="menu_edit">Редактировать</string>
     <string name="menu_delete">Удалить</string>
-    <string name="menu_edit_date">Редактировать дату</string>
+    <string name="menu_favorite">Избранное</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

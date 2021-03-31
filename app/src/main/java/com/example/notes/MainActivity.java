@@ -20,6 +20,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         if(savedInstanceState==null){
             // подключаемся к базе
             String[] notes = getResources().getStringArray(R.array.notes);
@@ -28,10 +32,6 @@ public class MainActivity extends AppCompatActivity {
 
             addFragment(mListNotesFragment);
         }
-
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         changeOrientation(mListNotesFragment);
 

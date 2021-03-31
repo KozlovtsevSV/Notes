@@ -12,11 +12,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.TimeZone;
 
 /**
@@ -32,6 +33,7 @@ public class NoteEditFragment extends Fragment {
     private EditText mEditText, mEditName;
     private TextView mViewData;
     private LinearLayout mLinerLayoutDate;
+    private long mDate;
     private int mYear, mMonth, mDay;
 
     public NoteEditFragment() {
@@ -51,6 +53,7 @@ public class NoteEditFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mNote = getArguments().getParcelable(ARG_NOTE);
+            mDate = mNote.getDateNoteLong();
         }
     }
 
@@ -103,20 +106,26 @@ public class NoteEditFragment extends Fragment {
                 else if (mButtonSave != null && view == mButtonSave) {
                     mNote.setNameNote(mEditName.getText().toString());
                     mNote.setDescriptionNote(mEditText.getText().toString());
+                    mNote.setDateNewNote(mDate);
                     FragmentManager manager = requireActivity().getSupportFragmentManager();
                     manager.popBackStack();
+                    Fragment fragment = manager.findFragmentByTag(ListNotesFragment.FRAGMENT_NOTE);
+                    // если нашли фрагмент с заметкой в менеджере необходимо его перерисовать, чтобы отобразить сохраненые изменения
+                    if(fragment!= null){
+                        manager.beginTransaction().detach(fragment).commitNowAllowingStateLoss();
+                        manager.beginTransaction().attach(fragment).commitAllowingStateLoss();
+                    }
                 }
             }
         };
 
         mButtonBack.setOnClickListener(buttonClick);
         mButtonSave.setOnClickListener(buttonClick);
-
         mEditText.setOnLongClickListener(textViewLongClickListener);
         mLinerLayoutDate.setOnClickListener(buttonClick);
 
         formNote();
-        registerForContextMenu(mEditText);
+
         return view;
     }
 
@@ -130,8 +139,9 @@ public class NoteEditFragment extends Fragment {
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe"));
                         cal.set(year, monthOfYear, dayOfMonth);
-                        mNote.setDateNewNote(cal.getTimeInMillis());
-                        MainActivity.dBase.setDateNote(mNote);
+                        mDate = cal.getTimeInMillis();
+                       // mNote.setDateNewNote(cal.getTimeInMillis());
+                        //MainActivity.dBase.setDateNote(mNote);
                         formNote();
                     }
                 }, year, month, day);
@@ -143,14 +153,9 @@ public class NoteEditFragment extends Fragment {
         if(mNote!= null){
             mEditName.setText(mNote.getNameNote());
             mEditText.setText(mNote.getDescriptionNote());
-            mViewData.setText(mNote.getDateNote());
-            //mEditText.setText(mNote.getDateNote() + " | "+ mNote.getNameNote() + "\n" + mNote.getDescriptionNote());
+            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+            mViewData.setText(formatter.format(new Date(mDate)));
         }
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
     }
 
 }

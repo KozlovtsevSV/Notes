@@ -14,9 +14,9 @@
         android:title="@string/menu_delete"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_edit_date"
+        android:id="@+id/action_add_favorite"
         android:icon="@android:drawable/ic_notification_clear_all"
         android:orderInCategory="10"
-        android:title="@string/menu_edit_date"
+        android:title="@string/menu_favorite"
         app:showAsAction="never" />
 </menu>
