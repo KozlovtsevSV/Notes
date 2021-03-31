@@ -180,7 +180,9 @@ public class ListNotesFragment extends Fragment {
                     mData.deleteNote(mData.getNote(lastSelectedPosition));
                     mAdapter.notifyItemRemoved(mAdapter.getLastSelectedPosition());
                     mCurrentNote = null;
-                    showNote(mCurrentNote);
+                    if (mIsLandscape) {
+                        showNote(mCurrentNote);
+                    }
                     return true;
             }
         }
