@@ -122,11 +122,11 @@ public class NoteFragment extends Fragment {
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe"));
-                        cal.set(year, monthOfYear, dayOfMonth);
-                        mNote.setDateNewNote(cal.getTimeInMillis());
-                        MainActivity.dBase.setDateNote(mNote);
-                        formNote();
+//                        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe"));
+//                        cal.set(year, monthOfYear, dayOfMonth);
+//                        mNote.setDateNewNote(cal.getTimeInMillis());
+//                        MainActivity.dBase.setDateNote(mNote);
+//                        formNote();
                     }
                 }, year, month, day);
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis() -1000);

@@ -26,9 +26,9 @@ public class MainActivity extends AppCompatActivity {
 
         if(savedInstanceState==null){
             // подключаемся к базе
-            String[] notes = getResources().getStringArray(R.array.notes);
-            String[] notesDescription = getResources().getStringArray(R.array.notesDescription);
-            dBase = new DataBase(notes, notesDescription);
+            //String[] notes = getResources().getStringArray(R.array.notes);
+            //String[] notesDescription = getResources().getStringArray(R.array.notesDescription);
+            //dBase = new DataBase(notes, notesDescription);
 
             addFragment(mListNotesFragment);
         }

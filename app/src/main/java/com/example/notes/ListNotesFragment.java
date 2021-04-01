@@ -29,12 +29,45 @@ public class ListNotesFragment extends Fragment {
 
     public static final String CURRENT_NOTE = "CurrentNote";
     public static final String FRAGMENT_NOTE = "FragmentNote";
+    private static final String ARG_ITEM_INDEX = "CurrentNote_index";
     private Note mCurrentNote;
+    private int mCurrentIndex;
     private boolean mIsLandscape;
+    private DataBaseSource mDataBaseSource;
 
-    private DataBase mData;
+    //private DataBase mData;
     private NoteAdapter mAdapter;
     private RecyclerView mRecyclerView;
+
+    private DataBaseSource.DataBaseListener mListener = new DataBaseSource.DataBaseListener() {
+        @Override
+        public void onItemAdded(int index) {
+            if (mAdapter != null) {
+                mAdapter.notifyItemInserted(index);
+            }
+        }
+
+        @Override
+        public void onItemRemoved(int index) {
+            if (mAdapter != null) {
+                mAdapter.notifyItemRemoved(index);
+            }
+        }
+
+        @Override
+        public void onItemUpdated(int index) {
+            if (mAdapter != null) {
+                mAdapter.notifyItemChanged(index);
+            }
+        }
+
+        @Override
+        public void onDataSetChanged() {
+            if (mAdapter != null) {
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+    };
 
 
     public ListNotesFragment() {
@@ -51,10 +84,28 @@ public class ListNotesFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mCurrentIndex = getArguments().getInt(ARG_ITEM_INDEX, -1);
+        }
+
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_list_notes, container, false);
+
+//        final DataBaseSource dataSource = DataBaseFirebaseImpl.getInstance(getResources());
+//        Note mCurrentNote = dataSource.getItemAt(mCurrentIndex);
+        //if(mDataBaseSource == null){
+        mDataBaseSource = DataBaseFirebaseImpl.getInstance();
+        mAdapter = new NoteAdapter(mDataBaseSource,this);
+        mDataBaseSource.addDataBaseListener(mListener);
+    //}
 
         initView(view);
         setHasOptionsMenu(true);
@@ -64,7 +115,7 @@ public class ListNotesFragment extends Fragment {
     private void initView(View view) {
         mRecyclerView = view.findViewById(R.id.recycler_view_lines);
         // Получим источник данных для списка
-        mData = MainActivity.dBase;
+        //mData = MainActivity.dBase;
         initRecyclerView();
     }
 
@@ -83,7 +134,7 @@ public class ListNotesFragment extends Fragment {
         mRecyclerView.setLayoutManager(layoutManager);
 
         // Установим адаптер
-        mAdapter = new NoteAdapter(mData, this);
+        mAdapter = new NoteAdapter(mDataBaseSource, this);
         mRecyclerView.setAdapter(mAdapter);
 
         // Добавим разделитель карточек
@@ -100,7 +151,7 @@ public class ListNotesFragment extends Fragment {
         mAdapter.SetOnItemClickListener(new NoteAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                mCurrentNote = MainActivity.dBase.getNote(position);
+                mCurrentNote = mDataBaseSource.getItemAt(position);//.dBase.getNote(position);
                 showNote(mCurrentNote);
             }
         });
@@ -127,9 +178,9 @@ public class ListNotesFragment extends Fragment {
         inflater.inflate(R.menu.main_menu, menu);
     }
 
-    private void editNote(Note note){
+    private void editNote(int index){
         // Создаём новый фрагмент с текущей позицией
-        NoteEditFragment detail = NoteEditFragment.newInstance(note);
+        NoteEditFragment detail = NoteEditFragment.newInstance(index);
         // Выполняем транзакцию по замене фрагмента
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -176,10 +227,10 @@ public class ListNotesFragment extends Fragment {
         if (lastSelectedPosition != -1) {
             switch (item.getItemId()) {
                 case R.id.action_edit:
-                    editNote(mData.getNote(lastSelectedPosition));
+                    editNote(lastSelectedPosition);
                     return true;
                 case R.id.action_delete:
-                    mData.deleteNote(mData.getNote(lastSelectedPosition));
+                    //mData.remove(mData.getNote(lastSelectedPosition));
                     mAdapter.notifyItemRemoved(mAdapter.getLastSelectedPosition());
                     mCurrentNote = null;
                     if (mIsLandscape) {
@@ -198,12 +249,23 @@ public class ListNotesFragment extends Fragment {
 
         switch(id){
             case R.id.action_add:
-                Note newNote = mData.addNote();
-                editNote(newNote);
-                int position = newNote.getIndexNote();
-                mAdapter.notifyItemInserted(newNote.getIndexNote());
+//                Note newNote = mData.addNote();
+//                editNote(newNote);
+//                int position = newNote.getIndexNote();
+//                mAdapter.notifyItemInserted(newNote.getIndexNote());
+
+                mDataBaseSource.add(new Note("Новая заметка"));
+                int position = mDataBaseSource.getItemsCount() - 1;
+                editNote(position);
                 ((RecyclerView) getView()).scrollToPosition(position);
-                hideSoftKeyboard(getActivity());
+                //hideSoftKeyboard(getActivity());
+
+;
+
+//                mViewHolderAdapter.notifyItemInserted(position);
+//                ((RecyclerView) getView()).scrollToPosition(position);
+
+
                 return true;
             case R.id.action_settings:
                 Toast.makeText(getContext(), "Заглушка Настройки", Toast.LENGTH_SHORT).show();

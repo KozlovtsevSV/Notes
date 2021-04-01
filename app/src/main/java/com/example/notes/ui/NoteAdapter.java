@@ -44,12 +44,12 @@ public class NoteAdapter
     @Override
     public void onBindViewHolder(@NonNull NoteAdapter.ViewHolder viewHolder, int i) {
         // Вынести на экран, используя ViewHolder
-        viewHolder.getNameView().setText(dataSource.getNote(i).getNameNote());
+        viewHolder.getNameView().setText(dataSource.getItemAt(i).getNameNote());
     }
 
     @Override
     public int getItemCount() {
-        return dataSource.getSize();
+        return dataSource.getItemsCount();
     }
 
     public void SetOnItemClickListener(OnItemClickListener itemClickListener){

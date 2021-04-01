@@ -27,7 +27,7 @@ import java.util.TimeZone;
  */
 public class NoteEditFragment extends Fragment {
 
-    public static final String ARG_NOTE = "Note";
+    public static final String ARG_INDEX = "NoteIndex";
     private Note mNote;
     private Button mButtonSelectDate, mButtonBack, mButtonSave;
     private EditText mEditText, mEditName;
@@ -35,15 +35,16 @@ public class NoteEditFragment extends Fragment {
     private LinearLayout mLinerLayoutDate;
     private long mDate;
     private int mYear, mMonth, mDay;
+    private int mCurrentIndex;
 
     public NoteEditFragment() {
         // Required empty public constructor
     }
 
-    public static NoteEditFragment newInstance(Note note) {
+    public static NoteEditFragment newInstance(int index) {
         NoteEditFragment fragment = new NoteEditFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_NOTE, note);
+        args.putInt(ARG_INDEX, index);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,8 +53,8 @@ public class NoteEditFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mNote = getArguments().getParcelable(ARG_NOTE);
-            mDate = mNote.getDateNoteLong();
+            mCurrentIndex = getArguments().getInt(ARG_INDEX);
+           //mCurrentIndex = mNote.getIndexNote();
         }
     }
 
@@ -91,6 +92,9 @@ public class NoteEditFragment extends Fragment {
             }
         };
 
+        final DataBaseSource dataSource = DataBaseFirebaseImpl.getInstance();
+        mNote = dataSource.getItemAt(mCurrentIndex);
+
         View.OnClickListener buttonClick = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,9 +108,12 @@ public class NoteEditFragment extends Fragment {
                     manager.popBackStack();
                 }
                 else if (mButtonSave != null && view == mButtonSave) {
+
                     mNote.setNameNote(mEditName.getText().toString());
                     mNote.setDescriptionNote(mEditText.getText().toString());
                     mNote.setDateNewNote(mDate);
+                    dataSource.update(mNote);
+
                     FragmentManager manager = requireActivity().getSupportFragmentManager();
                     manager.popBackStack();
                     Fragment fragment = manager.findFragmentByTag(ListNotesFragment.FRAGMENT_NOTE);
@@ -123,6 +130,10 @@ public class NoteEditFragment extends Fragment {
         mButtonSave.setOnClickListener(buttonClick);
         mEditText.setOnLongClickListener(textViewLongClickListener);
         mLinerLayoutDate.setOnClickListener(buttonClick);
+
+//        final DataBaseSource dataSource = DataBaseFirebaseImpl.getInstance();
+//        mNote = dataSource.getItemAt(mCurrentIndex);
+        mDate = mNote.getDateNoteLong();
 
         formNote();
 
@@ -149,7 +160,8 @@ public class NoteEditFragment extends Fragment {
         datePickerDialog.show();
     }
 
-    private void formNote(){
+    private void formNote()
+    {
         if(mNote!= null){
             mEditName.setText(mNote.getNameNote());
             mEditText.setText(mNote.getDescriptionNote());
