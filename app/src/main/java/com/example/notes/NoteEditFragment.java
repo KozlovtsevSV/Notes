@@ -15,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.notes.ui.NoteAdapter;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,33 +30,36 @@ import java.util.TimeZone;
 public class NoteEditFragment extends Fragment {
 
     public static final String ARG_INDEX = "NoteIndex";
+    public static final String ARG_NOTE = "Note";
     private Note mNote;
     private Button mButtonSelectDate, mButtonBack, mButtonSave;
     private EditText mEditText, mEditName;
     private TextView mViewData;
     private LinearLayout mLinerLayoutDate;
     private long mDate;
-    private int mYear, mMonth, mDay;
     private int mCurrentIndex;
+    private NoteAdapter mAdapter;
+
 
     public NoteEditFragment() {
         // Required empty public constructor
     }
 
+
     public static NoteEditFragment newInstance(int index) {
         NoteEditFragment fragment = new NoteEditFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_INDEX, index);
-        fragment.setArguments(args);
-        return fragment;
+            Bundle args = new Bundle();
+            args.putInt(ARG_INDEX, index);
+            fragment.setArguments(args);
+            return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mCurrentIndex = getArguments().getInt(ARG_INDEX);
-           //mCurrentIndex = mNote.getIndexNote();
         }
     }
 
@@ -92,8 +97,10 @@ public class NoteEditFragment extends Fragment {
             }
         };
 
-        final DataBaseSource dataSource = DataBaseFirebaseImpl.getInstance();
-        mNote = dataSource.getItemAt(mCurrentIndex);
+        DataBaseFirebaseImpl mDataBaseSource = DataBaseFirebaseImpl.getInstance();
+        mAdapter = new NoteAdapter(mDataBaseSource,this);
+        //mDataBaseSource.addDataBaseListener(ListNotesFragment.mmListener);
+        mNote = mDataBaseSource.getItemAt(mCurrentIndex);
 
         View.OnClickListener buttonClick = new View.OnClickListener() {
             @Override
@@ -108,12 +115,11 @@ public class NoteEditFragment extends Fragment {
                     manager.popBackStack();
                 }
                 else if (mButtonSave != null && view == mButtonSave) {
-
                     mNote.setNameNote(mEditName.getText().toString());
-                    mNote.setDescriptionNote(mEditText.getText().toString());
                     mNote.setDateNewNote(mDate);
-                    dataSource.update(mNote);
-
+                    mNote.setTextNote(mEditText.getText().toString());
+                    mDataBaseSource.update(mNote);
+                    mAdapter.notifyItemChanged(mCurrentIndex);
                     FragmentManager manager = requireActivity().getSupportFragmentManager();
                     manager.popBackStack();
                     Fragment fragment = manager.findFragmentByTag(ListNotesFragment.FRAGMENT_NOTE);
@@ -131,15 +137,12 @@ public class NoteEditFragment extends Fragment {
         mEditText.setOnLongClickListener(textViewLongClickListener);
         mLinerLayoutDate.setOnClickListener(buttonClick);
 
-//        final DataBaseSource dataSource = DataBaseFirebaseImpl.getInstance();
-//        mNote = dataSource.getItemAt(mCurrentIndex);
         mDate = mNote.getDateNoteLong();
 
         formNote();
 
         return view;
     }
-
 
     private void callDatePicker(View view, int year, int month, int day) {
 
@@ -151,8 +154,6 @@ public class NoteEditFragment extends Fragment {
                         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe"));
                         cal.set(year, monthOfYear, dayOfMonth);
                         mDate = cal.getTimeInMillis();
-                       // mNote.setDateNewNote(cal.getTimeInMillis());
-                        //MainActivity.dBase.setDateNote(mNote);
                         formNote();
                     }
                 }, year, month, day);
@@ -164,7 +165,7 @@ public class NoteEditFragment extends Fragment {
     {
         if(mNote!= null){
             mEditName.setText(mNote.getNameNote());
-            mEditText.setText(mNote.getDescriptionNote());
+            mEditText.setText(mNote.getTextNote());
             SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
             mViewData.setText(formatter.format(new Date(mDate)));
         }

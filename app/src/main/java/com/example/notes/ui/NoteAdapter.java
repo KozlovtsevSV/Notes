@@ -12,8 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.notes.DataBase;
 import com.example.notes.R;
 
-public class NoteAdapter
-        extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
+public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     private DataBase dataSource;
     private OnItemClickListener itemClickListener;

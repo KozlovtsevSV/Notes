@@ -25,14 +25,22 @@ public class NoteFromFirestore extends Note {
     }
 
     public NoteFromFirestore(Note note) {
-        this(note.getIndexNote(), note.getNameNote(), note.getDescriptionNote(), note.getDateNoteLong());
+        this(note.getIndexNote(), note.getNameNote(), note.getTextNote(), note.getDateNoteLong());
+    }
+
+    public static Map<String, Object> toDocument(Note note){
+        Map<String, Object> answer = new HashMap<>();
+        answer.put(FIELD_NAME, note.getNameNote());
+        answer.put(FIELD_TEXT, note.getTextNote());
+        answer.put(FIELD_DATE, note.getDateNoteLong());
+        return answer;
     }
 
     public final Map<String, Object> getFields() {
         HashMap<String, Object> fields = new HashMap<>();
-        fields.put(FIELD_INDEX, getIndexNote());
+       // fields.put(FIELD_INDEX, getIndexNote());
         fields.put(FIELD_NAME, getNameNote());
-        fields.put(FIELD_TEXT, getDescriptionNote());
+        fields.put(FIELD_TEXT, getTextNote());
         fields.put(FIELD_DATE, getDateNoteLong());
         return Collections.unmodifiableMap(fields);
     }

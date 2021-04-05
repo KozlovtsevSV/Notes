@@ -39,7 +39,7 @@ public class ListNotesFragment extends Fragment {
     private NoteAdapter mAdapter;
     private RecyclerView mRecyclerView;
 
-    private DataBaseSource.DataBaseListener mListener = new DataBaseSource.DataBaseListener() {
+    public DataBaseSource.DataBaseListener mListener = new DataBaseSource.DataBaseListener() {
         @Override
         public void onItemAdded(int index) {
             if (mAdapter != null) {
@@ -99,17 +99,19 @@ public class ListNotesFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_list_notes, container, false);
 
-//        final DataBaseSource dataSource = DataBaseFirebaseImpl.getInstance(getResources());
-//        Note mCurrentNote = dataSource.getItemAt(mCurrentIndex);
-        //if(mDataBaseSource == null){
         mDataBaseSource = DataBaseFirebaseImpl.getInstance();
         mAdapter = new NoteAdapter(mDataBaseSource,this);
         mDataBaseSource.addDataBaseListener(mListener);
-    //}
 
         initView(view);
         setHasOptionsMenu(true);
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mDataBaseSource.removeDataBaseListener(mListener);
     }
 
     private void initView(View view) {
@@ -230,7 +232,6 @@ public class ListNotesFragment extends Fragment {
                     editNote(lastSelectedPosition);
                     return true;
                 case R.id.action_delete:
-                    //mData.remove(mData.getNote(lastSelectedPosition));
                     mAdapter.notifyItemRemoved(mAdapter.getLastSelectedPosition());
                     mCurrentNote = null;
                     if (mIsLandscape) {
@@ -249,22 +250,11 @@ public class ListNotesFragment extends Fragment {
 
         switch(id){
             case R.id.action_add:
-//                Note newNote = mData.addNote();
-//                editNote(newNote);
-//                int position = newNote.getIndexNote();
-//                mAdapter.notifyItemInserted(newNote.getIndexNote());
-
                 mDataBaseSource.add(new Note("Новая заметка"));
                 int position = mDataBaseSource.getItemsCount() - 1;
+                mAdapter.notifyItemInserted(position);
                 editNote(position);
                 ((RecyclerView) getView()).scrollToPosition(position);
-                //hideSoftKeyboard(getActivity());
-
-;
-
-//                mViewHolderAdapter.notifyItemInserted(position);
-//                ((RecyclerView) getView()).scrollToPosition(position);
-
 
                 return true;
             case R.id.action_settings:

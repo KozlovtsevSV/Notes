@@ -18,13 +18,13 @@ public class Note implements Parcelable {
     //private int index;
     @NonNull
     private String nameNote;
-    private String descriptionNote;
+    private String textNote;
     private long dateCreationNote;
 
     Note(){
         //this.index = Integer.toString(++lastIndex);
         this.nameNote = "Новая заметка";
-        this.descriptionNote = "";
+        this.textNote = "";
         this.dateCreationNote = getDateNewNote();
 
     }
@@ -32,26 +32,27 @@ public class Note implements Parcelable {
     Note(String nameNote){
        // this.index = ++lastIndex;
         this.nameNote = nameNote;
+        this.textNote = "";
         this.dateCreationNote = getDateNewNote();
     }
 
-    public Note(String nameNote, String descriptionNote){
+    public Note(String nameNote, String textNote){
         //this.index = ++lastIndex;
         this.nameNote = nameNote;
-        this.descriptionNote = descriptionNote;
+        this.textNote = textNote;
         this.dateCreationNote = getDateNewNote();
     }
 
     public Note(String nameNote, String descriptionNote, long date){
         //this.index = ++lastIndex;
         this.nameNote = nameNote;
-        this.descriptionNote = descriptionNote;
+        this.textNote = descriptionNote;
         this.dateCreationNote = date;
     }
 
     protected Note(Parcel in) {
         nameNote = in.readString();
-        descriptionNote = in.readString();
+        textNote = in.readString();
         dateCreationNote = in.readLong();
     }
 
@@ -67,8 +68,8 @@ public class Note implements Parcelable {
         return this.nameNote;
     }
 
-    public String getDescriptionNote(){
-        return this.descriptionNote;
+    public String getTextNote(){
+        return this.textNote;
     }
 
     public String getDateNote(){
@@ -84,8 +85,8 @@ public class Note implements Parcelable {
         nameNote = textName;
     }
 
-    public void setDescriptionNote(String textDescription){
-        descriptionNote = textDescription;
+    public void setTextNote(String textDescription){
+        textNote = textDescription;
     }
 
     public void setDateNewNote(long date){
@@ -93,8 +94,6 @@ public class Note implements Parcelable {
     }
 
     public long getDateNoteLong(){
-//        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-//        return formatter.format(new Date(this.dateCreationNote));
         return this.dateCreationNote;
 
     }
@@ -119,6 +118,6 @@ public class Note implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(getNameNote());
-        parcel.writeString(getDescriptionNote());
+        parcel.writeString(getTextNote());
     }
 }

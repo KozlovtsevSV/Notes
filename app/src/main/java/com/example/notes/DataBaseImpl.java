@@ -29,15 +29,6 @@ public class DataBaseImpl extends DataBaseSource {
             mData.add(new Note(noteNames[i],
                     noteText[i]));
         }
-
-//        String[] fruitNames = resources.getStringArray(R.array.fruit_names);
-//
-//        TypedArray imgs = resources.obtainTypedArray(R.array.fruit_imgs);
-//        for (int i = 0; i < fruitNames.length; i++) {
-//            mData.add(new CardData(fruitNames[i],
-//                    imgs.getResourceId(i, -1)));
-//        }
- //       imgs.recycle();
         notifyDataSetChanged();
 
     }

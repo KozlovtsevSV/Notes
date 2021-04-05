@@ -67,7 +67,7 @@ public abstract class DataBaseSource implements DataBase {
             for (Note noteData : mData) {
                 if (id.equals(noteData.getIndexNote())) {
                     noteData.setNameNote(data.getNameNote());
-                    noteData.setDescriptionNote(data.getDescriptionNote());
+                    noteData.setTextNote(data.getTextNote());
                     noteData.setDateNewNote(data.getDateNoteLong());
                     notifyUpdated(index);
                     return;
@@ -79,9 +79,9 @@ public abstract class DataBaseSource implements DataBase {
         add(data);
     }
 
-    protected final void notifyUpdated(int idx) {
+    protected final void notifyUpdated(int index) {
         for (DataBaseListener listener : mListeners) {
-            listener.onItemUpdated(idx);
+            listener.onItemUpdated(index);
         }
     }
 

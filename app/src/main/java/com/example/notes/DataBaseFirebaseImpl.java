@@ -4,8 +4,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -60,23 +63,34 @@ public class DataBaseFirebaseImpl extends DataBaseSource {
 
     @Override
     public void add(@NonNull Note data) {
-        final NoteFromFirestore cardData;
+        final NoteFromFirestore noteData;
         if (data instanceof NoteFromFirestore) {
-            cardData = (NoteFromFirestore) data;
+            noteData = (NoteFromFirestore) data;
         } else {
-            cardData = new NoteFromFirestore(data);
+            noteData = new NoteFromFirestore(data);
         }
-        mData.add(cardData);
+        mData.add(noteData);
 
-//        UUID uuid = UUID.randomUUID();
-//        String randomUUIDString = uuid.toString();
-//
-//        cardData.setIndexNote(randomUUIDString);
+        mCollection.add(noteData.getFields()).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                noteData.setIndexNote(documentReference.getId());
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error adding document", e);
+                    }
+                });
+    }
 
-        mCollection.add(cardData.getFields()).addOnSuccessListener(documentReference -> {
-            cardData.setIndexNote(documentReference.getId());
-        });
-
+    @Override
+    public void update(@NonNull Note data) {
+        String id = data.getIndexNote();
+        // Изменить документ по идентификатору
+        mCollection.document(id).set(NoteFromFirestore.toDocument(data));
     }
 
     @Override
