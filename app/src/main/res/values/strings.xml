@@ -20,6 +20,16 @@
     <string name="menu_delete">Удалить</string>
     <string name="menu_favorite">Избранное</string>
 
+
+    <string name="dialog_delete_title">Удаление заметки</string>
+    <string name="dialog_delete_message">Удалить заметку?</string>
+    <string name="dialog_delete_button_positive_text">Да</string>
+    <string name="dialog_delete_button_negative_text">Нет</string>
+
+
+
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

@@ -1,6 +1,7 @@
 package com.example.notes;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -232,8 +234,37 @@ public class ListNotesFragment extends Fragment {
                     editNote(lastSelectedPosition);
                     return true;
                 case R.id.action_delete:
-                    mAdapter.notifyItemRemoved(mAdapter.getLastSelectedPosition());
-                    mCurrentNote = null;
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle(R.string.dialog_delete_title)
+                            .setMessage(R.string.dialog_delete_message)
+                            // Можно указать и пиктограмму
+                            .setIcon(R.mipmap.ic_launcher_round)
+                            // Из этого окна нельзя выйти кнопкой Back
+                            .setCancelable(false)
+                            // Устанавливаем кнопку. Название кнопки также можно
+                            // задавать строкой
+                            .setPositiveButton(R.string.dialog_delete_button_positive_text,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            mDataBaseSource.remove(mAdapter.getLastSelectedPosition());
+                                            mAdapter.notifyItemRemoved(mAdapter.getLastSelectedPosition());
+                                            mCurrentNote = null;
+                                        }
+                                    })
+                            .setNegativeButton(R.string.dialog_delete_button_negative_text,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                              Toast.makeText(getContext(), "Удаления заметки отменено", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                    );
+                    AlertDialog alert = builder.create();
+                    alert.show();
+//            }
+//        };
+//    }
+
                     if (mIsLandscape) {
                         showNote(mCurrentNote);
                     }
