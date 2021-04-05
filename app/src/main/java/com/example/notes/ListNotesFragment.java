@@ -1,132 +1,313 @@
 package com.example.notes;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import com.example.notes.ui.NoteAdapter;
 
 public class ListNotesFragment extends Fragment {
 
     public static final String CURRENT_NOTE = "CurrentNote";
-    private Note currentNote;
-    private boolean isLandscape;
+    public static final String FRAGMENT_NOTE = "FragmentNote";
+    private static final String ARG_ITEM_INDEX = "CurrentNote_index";
+    private Note mCurrentNote;
+    private int mCurrentIndex;
+    private boolean mIsLandscape;
+    private DataBaseSource mDataBaseSource;
+
+    //private DataBase mData;
+    private NoteAdapter mAdapter;
+    private RecyclerView mRecyclerView;
+
+    public DataBaseSource.DataBaseListener mListener = new DataBaseSource.DataBaseListener() {
+        @Override
+        public void onItemAdded(int index) {
+            if (mAdapter != null) {
+                mAdapter.notifyItemInserted(index);
+            }
+        }
+
+        @Override
+        public void onItemRemoved(int index) {
+            if (mAdapter != null) {
+                mAdapter.notifyItemRemoved(index);
+            }
+        }
+
+        @Override
+        public void onItemUpdated(int index) {
+            if (mAdapter != null) {
+                mAdapter.notifyItemChanged(index);
+            }
+        }
+
+        @Override
+        public void onDataSetChanged() {
+            if (mAdapter != null) {
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+    };
+
 
     public ListNotesFragment() {
-        // Required empty public constructor
     }
 
     public static ListNotesFragment newInstance() {
-        ListNotesFragment fragment = new ListNotesFragment();
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-         return inflater.inflate(R.layout.fragment_list_notes, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        initList(view);
-    }
-
-    private void initList(View view) {
-        LinearLayout layoutView = (LinearLayout)view;
-
-        int sizeTextListNotes = getResources().getInteger(R.integer.sizeTextListNotes);
-        int colorTextListNotes = getResources().getColor(R.color.colorTextListNotes);
-
-        ArrayList<Note> listNotes = MainActivity.dBase.getListNote();
-        if(listNotes== null){return;}
-
-        for(int i = 0; i < listNotes.size(); i++){
-            Note note = listNotes.get(i);
-            TextView tv = new TextView(getContext());
-            tv.setText(note.getNameNote());
-            tv.setTextSize(sizeTextListNotes);
-            tv.setTextColor(colorTextListNotes);
-            tv.setLines(1);
-            tv.setEllipsize(TextUtils.TruncateAt.END);
-            layoutView.addView(tv);
-            final int index = i;
-            tv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    currentNote = MainActivity.dBase.getNote(index);
-                    if (isLandscape) {
-                        showLandNote(currentNote);
-                    } else {
-                        showPortNote(currentNote);
-                    }
-                }
-            });
-        }
+        return new ListNotesFragment();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(CURRENT_NOTE, currentNote);
+        outState.putParcelable(CURRENT_NOTE, mCurrentNote);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mCurrentIndex = getArguments().getInt(ARG_ITEM_INDEX, -1);
+        }
+
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.fragment_list_notes, container, false);
+
+        mDataBaseSource = DataBaseFirebaseImpl.getInstance();
+        mAdapter = new NoteAdapter(mDataBaseSource,this);
+        mDataBaseSource.addDataBaseListener(mListener);
+
+        initView(view);
+        setHasOptionsMenu(true);
+        return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mDataBaseSource.removeDataBaseListener(mListener);
+    }
+
+    private void initView(View view) {
+        mRecyclerView = view.findViewById(R.id.recycler_view_lines);
+        // Получим источник данных для списка
+        //mData = MainActivity.dBase;
+        initRecyclerView();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    private void initRecyclerView(){
+
+        // Эта установка служит для повышения производительности системы
+        mRecyclerView.setHasFixedSize(true);
+
+        // Будем работать со встроенным менеджером
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(layoutManager);
+
+        // Установим адаптер
+        mAdapter = new NoteAdapter(mDataBaseSource, this);
+        mRecyclerView.setAdapter(mAdapter);
+
+        // Добавим разделитель карточек
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(),  LinearLayoutManager.VERTICAL);
+        itemDecoration.setDrawable(getResources().getDrawable(R.drawable.separator, null));
+        mRecyclerView.addItemDecoration(itemDecoration);
+
+        DefaultItemAnimator itemAnimator = new DefaultItemAnimator();
+        itemAnimator.setAddDuration(1000);
+        itemAnimator.setRemoveDuration(1000);
+        mRecyclerView.setItemAnimator(itemAnimator);
+
+        // Установим слушателя
+        mAdapter.SetOnItemClickListener(new NoteAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                mCurrentNote = mDataBaseSource.getItemAt(position);//.dBase.getNote(position);
+                showNote(mCurrentNote);
+            }
+        });
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        isLandscape = getResources().getConfiguration().orientation
+        if(savedInstanceState != null){
+            mCurrentNote = savedInstanceState.getParcelable(CURRENT_NOTE);
+        }
+
+        mIsLandscape = getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_LANDSCAPE;
 
-        if (savedInstanceState != null) {
-            // Восстановление текущей позиции.
-            currentNote = savedInstanceState.getParcelable(CURRENT_NOTE);
-        }
-        if (isLandscape) {
-            showLandNote(currentNote);
+        if (mIsLandscape) {
+            showNote(mCurrentNote);
         }
     }
 
-    private void showPortNote(Note note) {
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main_menu, menu);
+    }
+
+    private void editNote(int index){
+        // Создаём новый фрагмент с текущей позицией
+        NoteEditFragment detail = NoteEditFragment.newInstance(index);
+        // Выполняем транзакцию по замене фрагмента
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        if(mIsLandscape){// замена фрагмента
+            fragmentTransaction.add(R.id.fragment_container_note, detail);
+        }
+        else{
+            fragmentTransaction.replace(R.id.fragment_container, detail);
+        }
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        fragmentTransaction.commit();
+    }
+
+
+    public void showNote(Note note) {
 
         NoteFragment detail = NoteFragment.newInstance(note);
         // Выполняем транзакцию по замене фрагмента
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, detail);  // замена фрагмента
+        if(mIsLandscape){// замена фрагмента
+            fragmentTransaction.add(R.id.fragment_container_note, detail, FRAGMENT_NOTE);
+        }
+        else{
+            fragmentTransaction.replace(R.id.fragment_container, detail, FRAGMENT_NOTE);
+        }
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragmentTransaction.commit();
 
     }
 
-    private void showLandNote(Note note) {
-        // Создаём новый фрагмент с текущей позицией
-        NoteFragment detail = NoteFragment.newInstance(note);
+    @Override
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = requireActivity().getMenuInflater();
+        inflater.inflate(R.menu.list_menu, menu);
+    }
 
-        // Выполняем транзакцию по дпбавлению фрагмента
-        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.fragment_container_note, detail);  // добавим фрагмента
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        fragmentTransaction.commit();
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+       int lastSelectedPosition = mAdapter.getLastSelectedPosition();
+        if (lastSelectedPosition != -1) {
+            switch (item.getItemId()) {
+                case R.id.action_edit:
+                    editNote(lastSelectedPosition);
+                    return true;
+                case R.id.action_delete:
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle(R.string.dialog_delete_title)
+                            .setMessage(R.string.dialog_delete_message)
+                            // Можно указать и пиктограмму
+                            .setIcon(R.mipmap.ic_launcher_round)
+                            // Из этого окна нельзя выйти кнопкой Back
+                            .setCancelable(false)
+                            // Устанавливаем кнопку. Название кнопки также можно
+                            // задавать строкой
+                            .setPositiveButton(R.string.dialog_delete_button_positive_text,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            mDataBaseSource.remove(mAdapter.getLastSelectedPosition());
+                                            mAdapter.notifyItemRemoved(mAdapter.getLastSelectedPosition());
+                                            mCurrentNote = null;
+                                        }
+                                    })
+                            .setNegativeButton(R.string.dialog_delete_button_negative_text,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                              Toast.makeText(getContext(), "Удаления заметки отменено", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                    );
+                    AlertDialog alert = builder.create();
+                    alert.show();
+//            }
+//        };
+//    }
+
+                    if (mIsLandscape) {
+                        showNote(mCurrentNote);
+                    }
+                    return true;
+            }
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Обработка выбора пункта меню приложения (активити)
+        int id = item.getItemId();
+
+        switch(id){
+            case R.id.action_add:
+                mDataBaseSource.add(new Note("Новая заметка"));
+                int position = mDataBaseSource.getItemsCount() - 1;
+                mAdapter.notifyItemInserted(position);
+                editNote(position);
+                ((RecyclerView) getView()).scrollToPosition(position);
+
+                return true;
+            case R.id.action_settings:
+                Toast.makeText(getContext(), "Заглушка Настройки", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_favorite:
+                Toast.makeText(getContext(), "Заглушка Избранное", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.about_author:
+                Toast.makeText(getContext(), "Заглушка О програме", Toast.LENGTH_SHORT).show();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(
+                activity.getCurrentFocus().getWindowToken(), 0);
     }
 
 

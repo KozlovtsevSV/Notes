@@ -23,25 +23,28 @@
             android:orientation="vertical">
 
         <TableLayout
+            android:id="@+id/noteToolBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <Button
-                    android:id="@+id/buttonBack"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/textButtonBack"/>
-
+                android:layout_height="match_parent"
+                android:gravity="right">
                 <Button
                     android:id="@+id/buttonSelectDate"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/textButtonSelectDate"/>
+                    android:layout_height="match_parent"
+                    android:text="@string/textButtonSelectDate"
+                    android:visibility="invisible" />
+
+                <Button
+                    android:id="@+id/buttonBack"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:drawable/btn_dialog"/>
+
             </TableRow>
 
         </TableLayout>
@@ -55,6 +58,7 @@
                     android:id="@+id/text_note"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_gravity="top"
                     android:textSize="@dimen/sizeTextDescriptionNote"/>
 
            </ScrollView>

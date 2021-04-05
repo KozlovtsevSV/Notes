@@ -1,8 +1,37 @@
 <resources>
-    <string name="app_name">Notes</string>
+    <string name="app_name">Заметки</string>
     <string name="textButtonSelectDate">Изменить дату</string>
     <string name="textButtonBack">Назад</string>
 
+    <string name="textButtonSaveNote">Сохранить</string>
+    <string name="textButtonCancelNote">Отмена</string>
+
+    <string name="note_edit">Редактировать</string>
+    <string name="note_send">Поделиться</string>
+    <string name="note_copy">Скопировать</string>
+
+    <string name="main_menu_add">Добавить</string>
+    <string name="main_menu_search">Поиск</string>
+    <string name="main_menu_favorite">Избранное</string>
+    <string name="main_menu_settings">Настройки</string>
+    <string name="main_menu_about_author">О программе</string>
+
+    <string name="menu_edit">Редактировать</string>
+    <string name="menu_delete">Удалить</string>
+    <string name="menu_favorite">Избранное</string>
+
+
+    <string name="dialog_delete_title">Удаление заметки</string>
+    <string name="dialog_delete_message">Удалить заметку?</string>
+    <string name="dialog_delete_button_positive_text">Да</string>
+    <string name="dialog_delete_button_negative_text">Нет</string>
+
+
+
+
+
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
 </resources>

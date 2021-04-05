@@ -3,40 +3,56 @@ package com.example.notes;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Note implements Parcelable {
     private static int lastIndex = -1;
 
-    private int index;
+    @Nullable
+    private String index;
+
+    //private int index;
+    @NonNull
     private String nameNote;
-    private String descriptionNote;
+    private String textNote;
     private long dateCreationNote;
 
     Note(){
-        this.index = ++lastIndex;
+        //this.index = Integer.toString(++lastIndex);
+        this.nameNote = "Новая заметка";
+        this.textNote = "";
         this.dateCreationNote = getDateNewNote();
 
     }
 
     Note(String nameNote){
-        this.index = ++lastIndex;
+       // this.index = ++lastIndex;
         this.nameNote = nameNote;
+        this.textNote = "";
         this.dateCreationNote = getDateNewNote();
     }
 
-    Note(String nameNote, String descriptionNote){
-        this.index = ++lastIndex;
+    public Note(String nameNote, String textNote){
+        //this.index = ++lastIndex;
         this.nameNote = nameNote;
-        this.descriptionNote = descriptionNote;
+        this.textNote = textNote;
         this.dateCreationNote = getDateNewNote();
+    }
 
+    public Note(String nameNote, String descriptionNote, long date){
+        //this.index = ++lastIndex;
+        this.nameNote = nameNote;
+        this.textNote = descriptionNote;
+        this.dateCreationNote = date;
     }
 
     protected Note(Parcel in) {
         nameNote = in.readString();
-        descriptionNote = in.readString();
+        textNote = in.readString();
         dateCreationNote = in.readLong();
     }
 
@@ -44,20 +60,16 @@ public class Note implements Parcelable {
          return System.currentTimeMillis();
     }
 
-    public int getIndexNote(){
+    public String getIndexNote(){
         return this.index;
-    }
-
-    public void setDateNewNote(long date){
-        this.dateCreationNote = date;
     }
 
     public String getNameNote(){
         return this.nameNote;
     }
 
-    public String getDescriptionNote(){
-        return this.descriptionNote;
+    public String getTextNote(){
+        return this.textNote;
     }
 
     public String getDateNote(){
@@ -65,9 +77,23 @@ public class Note implements Parcelable {
         return formatter.format(new Date(this.dateCreationNote));
     }
 
+    public void setIndexNote(String index){
+        this.index = index;
+    }
+
+    public void setNameNote(String textName){
+        nameNote = textName;
+    }
+
+    public void setTextNote(String textDescription){
+        textNote = textDescription;
+    }
+
+    public void setDateNewNote(long date){
+        this.dateCreationNote = date;
+    }
+
     public long getDateNoteLong(){
-//        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-//        return formatter.format(new Date(this.dateCreationNote));
         return this.dateCreationNote;
 
     }
@@ -92,6 +118,6 @@ public class Note implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(getNameNote());
-        parcel.writeString(getDescriptionNote());
+        parcel.writeString(getTextNote());
     }
 }
