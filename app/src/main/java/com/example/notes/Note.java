@@ -16,6 +16,8 @@ public class Note implements Parcelable {
 
     Note(){
         this.index = ++lastIndex;
+        this.nameNote = "Новая заметка";
+        this.descriptionNote = "";
         this.dateCreationNote = getDateNewNote();
 
     }
@@ -48,10 +50,6 @@ public class Note implements Parcelable {
         return this.index;
     }
 
-    public void setDateNewNote(long date){
-        this.dateCreationNote = date;
-    }
-
     public String getNameNote(){
         return this.nameNote;
     }
@@ -63,6 +61,18 @@ public class Note implements Parcelable {
     public String getDateNote(){
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
         return formatter.format(new Date(this.dateCreationNote));
+    }
+
+    public void setNameNote(String textName){
+        nameNote = textName;
+    }
+
+    public void setDescriptionNote(String textDescription){
+        descriptionNote = textDescription;
+    }
+
+    public void setDateNewNote(long date){
+        this.dateCreationNote = date;
     }
 
     public long getDateNoteLong(){

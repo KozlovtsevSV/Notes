@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="listNotesSizeText">25sp</dimen>
+    <dimen name="listNotesSizeNameText">25sp</dimen>
+    <dimen name="listNotesSizedateText">16sp</dimen>
     <dimen name="sizeTextDescriptionNote">18sp</dimen>
 </resources>
